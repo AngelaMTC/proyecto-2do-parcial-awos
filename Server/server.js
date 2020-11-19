@@ -17,11 +17,18 @@ app.get('/', function (req, res) {
   res.send('<h1>Quiuboles al servidor REST.</h1>');
 });
 
-app.get('usuario', function (req, res) {
+app.get('/usuario', function (req, res) {
     res.json({
       // 200: Todo salió bien.
       ok: 200,
       mensaje: '<h1>Quiuboles al Usuarios.</h1>'});
+  });
+
+  app.get('/usuario', function (req, res) {
+    res.json({
+      // 200: Todo salió bien.
+      ok: 200,
+      mensaje: 'Jelou'});
   });
 
 // app.get('/saludo', function (req, res) {
@@ -103,5 +110,5 @@ app.get('usuario', function (req, res) {
 // listen: escucha la app.
 // Se volvió función.
 app.listen(process.env.PORT, () => {
-console.log('>El servidor está en línea en el puerto 3000', process.env.PORT);
+console.log('El servidor está en línea en el puerto: ', process.env.PORT);
 });
