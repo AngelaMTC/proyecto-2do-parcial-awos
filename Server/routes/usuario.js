@@ -1,4 +1,5 @@
 const express = require('express');
+const usuario = require('../models/usuario');
 const Usuario = require('../models/usuario');
 const app = express();
 
@@ -37,25 +38,50 @@ const app = express();
     // });
   
     app.post('/usuario', function(req,res){
-      let nombre = req.body.nombre;
+      // let nombre = req.body.nombre;
       let body = req.body;
-  
-      if(nombre === undefined){
-        res.status(400).json({
-          ok: 400,
-          mensaje: 'Favor de mandar el valor del nombre'
+      let usr = new Usuario({
+        nombre: body.nombre,
+        email: body.email,
+        password: body.password
+      });
+
+      usr.save((err, usrDB) => {
+        // Si hubo algún error:
+        if (err){
+          return res.status(400).json({
+            ok: false,
+            msg: 'Ocurrió un error.',
+            err
+          });
+        }
+
+        res.json({
+          ok: true,
+          msg: 'Usuario insertado con éxito.',
+          usrDB
         });
-      }else{
+      });
+  
+      // ----------------------------NO SIRVE-----------------------------
+      // if(nombre === undefined){
+      //   res.status(400).json({
+      //     ok: 400,
+      //     mensaje: 'Favor de mandar el valor del nombre'
+      //   });
+      // }else{
   
       
-      res.json({
-        ok: 200,
-        mensaje: 'Usuario insertado con éxito.',
-        // nombre: nombre
-        body: body
+      // res.json({
+      //   ok: 200,
+      //   mensaje: 'Usuario insertado con éxito.',
+      //   // nombre: nombre
+      //   body: body
         
-      });
-      }
+      // });
+      // }
+// ---------------------------NO SIRVE------------------------------
+
     });
   
     
