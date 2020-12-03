@@ -12,7 +12,8 @@ app.get('/producto', (req, res) => {
     Producto.find({})
     .skip(Number(desde))
     .limit(Number(hasta))
-    .populate('usuario', 'nombre precioUni') //Vincular con categoria, cómo?
+    .populate('usuario', 'nombre email') //Vincular con categoria.
+    .populate('categoria', 'descripcion')
     .exec((err, productos) => {
         if (err){
             return res.status(400).json({
@@ -32,7 +33,8 @@ app.get('/producto', (req, res) => {
 
 // --------POST--------- crear:
 app.post('/producto', (req, res) => {
-    // Se declara body aquí también?
+    
+    let body = req.body;
     let pro = new Producto({
         nombre: body.nombre,
         precioUni: body.precioUni,
@@ -41,27 +43,27 @@ app.post('/producto', (req, res) => {
         // disponible: body.disponible,
         usuario: body.usuario
     });
-});
-
-pro.save((err, proBD) => {
-    if (err){
-        return res.status(400).json({
-            ok: false,
-            msg: 'Ocurrió un erro al momento de insertar un producto.',
-            err
+    
+    pro.save((err, proBD) => {
+        if (err){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Ocurrió un erro al momento de insertar un producto.',
+                err
+            });
+        }
+        res.json({
+            ok: true,
+            msg: 'Se ha insertado el producto con éxito.',
+            proBD //Declarado en línea 46.
         });
-    }
-    res.json({
-        ok: true,
-        msg: 'Se ha insertado el producto con éxito.',
-        proBD //Declarado en línea 46.
     });
 });
-
+    
 // -------PUT---------actualizar:
 app.put('/producto/:id', (req, res) => {
     let id = req.params.id;
-    let body = _.pick(req.body, ['nombre', 'precioUni'])
+    let body = _.pick(req.body, ['nombre', 'precioUni']) //se actualiza todo menos id
 
     Producto.findByIdAndUpdate(id, body,
         {new: true, runValidators: true, context: 'query'},

@@ -1,4 +1,5 @@
 const express = require('express');
+const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const usuario = require('../models/usuario');
 const Usuario = require('../models/usuario');
@@ -65,7 +66,7 @@ app.get('/usuario', function (req, res) {
       let usr = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: body.password
+        password: bcrypt.hashSync(body.password, 10) //Encriptación de contraseña (el 10 es de vueltas para encriptar).
       });
 
       usr.save((err, usrDB) => {

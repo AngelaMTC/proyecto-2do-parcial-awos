@@ -19,6 +19,8 @@ app.get('/', function (req, res) {
 // Importación de rutas:
 app.use(require('./routes/usuario'));
 app.use(require('./routes/categoria'));
+app.use(require('./routes/producto'));
+app.use(require('./routes/login'));
  
 
 // Conexión a la base de datos Mongoose:
