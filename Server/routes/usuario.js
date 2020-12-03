@@ -1,18 +1,40 @@
 const express = require('express');
+const _ = require('underscore');
 const usuario = require('../models/usuario');
 const Usuario = require('../models/usuario');
 const app = express();
 
 // GET:Obtener.
-// res: response/respuesta.-recibo.
-// req: request/pedir.-mando.
+// res: response/respuesta.-recibo. (servidor-cliente)
+// req: request/pedir.-mando.(cliente-servidor)
 
+// Dentro de .find({WHERE}).
+app.get('/usuario', function (req, res) {
   
-  app.get('/usuario', function (req, res) {
-      res.json({
-        // 200: Todo salió bien.
-        ok: 200,
-        mensaje: '<h1>Quiuboles al Usuarios.</h1>'});
+  // Ordenar:
+  let desde = req.query.desde || 0;
+  let hasta = req.query.hasta || 5;
+  
+  // exec: ejecutar, a un find de Usuario:
+     Usuario.find({ estado: true })
+     .skip(Number(desde))
+     .limit(Number(hasta))
+     .exec((err, usuarios) => {
+        if (err) {
+          return res.status(400).json({
+            ok: false,
+            msg: 'Ocurrió un error al momento de consultar.',
+            err //Se deja puesto que ya está declarado en la línea 12-13.
+          });
+        }
+        // Respuesta exitosa:
+        res.json({
+          ok: true,
+          msg: 'Lista de usuarios obtenida con éxito.',
+          conteo: usuarios.length,
+          usuarios //Se deja puesto que ya está declarada en la línea 12.
+        });
+     });
     });
   
     // app.get('/usuario', function (req, res) {
@@ -87,17 +109,29 @@ const app = express();
     
     // PUT:Actualizar.
     // params: parámetros.
-    app.put('/usuario/:id/:nombre', function(req,res){
+    app.put('/usuario/:id', function(req,res){
       let id = req.params.id;
-      let nombre = req.params.nombre;
-      
-      res.json({
-        ok: 200,
-        mensaje: 'Usuario actualizado con éxito.',
-        id: id,
-        nombre: nombre
-      });
+      let body = _.pick(req.body, ['nombre', 'email'])// pick: agarra de body los parámetros que desees.
+      // new: si no lo encuentra, lo crea.}
+      // runValidators: Ejecute validores para que cheque los parámetros.(no se multipliquen o haya errores.)
+      Usuario.findByIdAndUpdate(id, body, 
+        { new: true, runValidators: true, context: 'query'},
+        (err, usrDB) => {
+        if (err) {
+          return res.status(400).json({
+            ok: false,
+            msg: 'Ocurrió un error al momento de actualizar.',
+            err //Se deja puesto que ya está declarado en la línea 119-120.
+          });
+        }
+        res.json({
+          ok: true,
+          msg: 'Usuario actualizado con éxito.',
+          usuario: usrDB
+        });
     });
+  });
+
     
     // app.put('/usuario', function(req,res){
     //   let nombre = id.body.nombre;
@@ -125,4 +159,3 @@ const app = express();
     });
 
     module.exports = app;
-  
