@@ -24,7 +24,7 @@ app.use(require('./routes/login'));
  
 
 // Conexión a la base de datos Mongoose:
- mongoose.connect('mongodb://localhost:27017/cafeteria', {
+ mongoose.connect('mongodb+srv://admin:4491253567@cluster0.gtqyg.mongodb.net/cafeteria', {
    useNewUrlParser: true,
    useCreateIndex: true,
    useUnifiedTopology: true,
